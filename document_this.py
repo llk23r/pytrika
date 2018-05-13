@@ -62,7 +62,7 @@ class DocumentThis(object):
             )
             book_id += 1
 
-        with open('doclinks.json', 'w') as links:
+        with open('../doclinks.json', 'w') as links:
             json.dump(book_dict, links, sort_keys=True, indent=4)
 
     @classmethod
