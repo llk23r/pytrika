@@ -1,6 +1,7 @@
 import json
 import os
 import platform
+import argparse
 
 
 def _get_bookmark_location():
@@ -9,8 +10,15 @@ def _get_bookmark_location():
         bookmark_location = "{}/.config/google-chrome/default/Bookmarks".format(
             home_path)
     elif(platform.system() == 'Darwin'):
-        bookmark_location = "{}/Library/Application Support/Google/Chrome/Default/Bookmarks".format(
-            home_path)
+        if args.flavor == 'chrome':
+            bookmark_location = "{}/Library/Application Support/Google/Chrome/Default/Bookmarks".format(
+                home_path)
+        elif args.flavor == 'canary':
+            bookmark_location = "{}/Library/Application Support/Google/Chrome Canary/Default/Bookmarks".format(
+                home_path)
+        else:
+            print("{} flavor of chrome is not supported".format(args.flavor))
+            raise Exception
     return bookmark_location
 
 
@@ -54,4 +62,8 @@ def create_the_document():
 
 
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-flv", "--flavor", dest="flavor",
+                        default="chrome", help="flavor")
+    args = parser.parse_args()
     create_the_document()
