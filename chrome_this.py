@@ -49,7 +49,8 @@ def create_the_document():
             else:
                 continue
             _write_bookmark(current_project_bookmark, links)
-    return
+    with open('bookmark_links', 'r') as bml:
+        print(bml.read())
 
 
 if __name__ == '__main__':
