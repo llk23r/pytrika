@@ -2,11 +2,13 @@
 from __future__ import unicode_literals
 
 import json
+import random
 import sqlite3
+import time
 from sqlite3 import Error
 
-from mozillabookmark import bookmark
 from currentproject import project
+from mozillabookmark import bookmark
 
 
 class DocumentThis(object):
@@ -35,15 +37,20 @@ class DocumentThis(object):
 
     @classmethod
     def filter_bookmark(cls, conn):
-        cur = conn.cursor()
-        query = "SELECT moz_bookmarks.title, moz_places.url\
-                 FROM moz_places\
-                JOIN moz_bookmarks ON (moz_places.id=moz_bookmarks.fk)\
-                WHERE moz_bookmarks.parent = (\
-                SELECT id FROM moz_bookmarks\
-                WHERE moz_bookmarks.title= ? AND type=2)"
-        result = cur.execute(query, [DocumentThis.set_current_project()])
-        return result
+        for idx, attempt in enumerate(range(50)):
+            try:
+                cur = conn.cursor()
+                query = "SELECT moz_bookmarks.title, moz_places.url\
+                         FROM moz_places\
+                        JOIN moz_bookmarks ON (moz_places.id=moz_bookmarks.fk)\
+                        WHERE moz_bookmarks.parent = (\
+                        SELECT id FROM moz_bookmarks\
+                        WHERE moz_bookmarks.title= ? AND type=2)"
+                result = cur.execute(
+                    query, [DocumentThis.set_current_project()])
+                return result
+            except sqlite3.OperationalError:
+                time.sleep(random.randint(10, 30))
 
     @classmethod
     def fetch_bookmark(cls, result, conn):

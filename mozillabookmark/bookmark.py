@@ -1,11 +1,10 @@
 #!/usr/bin/python3
-import subprocess
 import os
 
 
 class BookMarkLocation(object):
     def __init__(self):
-        self.firefox_bookmark_location = "{}/.mozilla/firefox/".format(
+        self.firefox_bookmark_location = "{}/Library/Application Support/Firefox".format(
             os.environ['HOME'])
 
     def get_bookmark_location(self):
