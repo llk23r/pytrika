@@ -2,11 +2,13 @@
 from __future__ import unicode_literals
 
 import json
+import random
 import sqlite3
+import time
 from sqlite3 import Error
 
-from mozillabookmark import bookmark
 from currentproject import project
+from mozillabookmark import bookmark
 
 
 class DocumentThis(object):
@@ -35,15 +37,25 @@ class DocumentThis(object):
 
     @classmethod
     def filter_bookmark(cls, conn):
-        cur = conn.cursor()
-        query = "SELECT moz_bookmarks.title, moz_places.url\
-                 FROM moz_places\
-                JOIN moz_bookmarks ON (moz_places.id=moz_bookmarks.fk)\
-                WHERE moz_bookmarks.parent = (\
-                SELECT id FROM moz_bookmarks\
-                WHERE moz_bookmarks.title= ? AND type=2)"
-        result = cur.execute(query, [DocumentThis.set_current_project()])
-        return result
+        """
+        Reason for a loop:
+        Handles: "operational error: database is locked"
+        Resource: "https://stackoverflow.com/a/57329416"
+        """
+        for attempt in range(50):
+            try:
+                cur = conn.cursor()
+                query = "SELECT moz_bookmarks.title, moz_places.url\
+                         FROM moz_places\
+                        JOIN moz_bookmarks ON (moz_places.id=moz_bookmarks.fk)\
+                        WHERE moz_bookmarks.parent = (\
+                        SELECT id FROM moz_bookmarks\
+                        WHERE moz_bookmarks.title= ? AND type=2)"
+                result = cur.execute(
+                    query, [DocumentThis.set_current_project()])
+                return result
+            except sqlite3.OperationalError:
+                time.sleep(random.randint(10, 30))
 
     @classmethod
     def fetch_bookmark(cls, result, conn):
@@ -65,12 +77,18 @@ class DocumentThis(object):
         with open('../doclinks.json', 'w') as links:
             json.dump(book_dict, links, sort_keys=True, indent=4)
 
-    @classmethod
-    def main(cls):
-        connection = DocumentThis.create_connection()
-        bookmarks = DocumentThis.filter_bookmark(connection)
-        DocumentThis.fetch_bookmark(bookmarks, connection)
+
+def main():
+    """
+    Driver function to perform the follwing:
+    create connection, filter bookmark and fetch bookmark
+    """
+    connection = DocumentThis.create_connection()
+    bookmarks = DocumentThis.filter_bookmark(connection)
+    DocumentThis.fetch_bookmark(bookmarks, connection)
+    connection.close()
+    del connection
 
 
 if __name__ == '__main__':
-    DocumentThis.main()
+    main()
