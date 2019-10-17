@@ -37,7 +37,12 @@ class DocumentThis(object):
 
     @classmethod
     def filter_bookmark(cls, conn):
-        for idx, attempt in enumerate(range(50)):
+        """
+        Reason for a loop:
+        Handles: "operational error: database is locked"
+        Resource: "https://stackoverflow.com/a/57329416"
+        """
+        for attempt in range(50):
             try:
                 cur = conn.cursor()
                 query = "SELECT moz_bookmarks.title, moz_places.url\
@@ -72,12 +77,18 @@ class DocumentThis(object):
         with open('../doclinks.json', 'w') as links:
             json.dump(book_dict, links, sort_keys=True, indent=4)
 
-    @classmethod
-    def main(cls):
-        connection = DocumentThis.create_connection()
-        bookmarks = DocumentThis.filter_bookmark(connection)
-        DocumentThis.fetch_bookmark(bookmarks, connection)
+
+def main():
+    """
+    Driver function to perform the follwing:
+    create connection, filter bookmark and fetch bookmark
+    """
+    connection = DocumentThis.create_connection()
+    bookmarks = DocumentThis.filter_bookmark(connection)
+    DocumentThis.fetch_bookmark(bookmarks, connection)
+    connection.close()
+    del connection
 
 
 if __name__ == '__main__':
-    DocumentThis.main()
+    main()
