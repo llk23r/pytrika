@@ -4,3 +4,6 @@
 
 2 - python - Reference requirements.txt for the install_requires kwarg in setuptools setup.py file - Stack Overflow 
  https://stackoverflow.com/questions/14399534/reference-requirements-txt-for-the-install-requires-kwarg-in-setuptools-setup-py/33685899#33685899
+
+3 - Open Sourcing a Python Project the Right Way 
+ https://jeffknupp.com/blog/2013/08/16/open-sourcing-a-python-project-the-right-way/
