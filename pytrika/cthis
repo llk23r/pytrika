@@ -95,7 +95,7 @@ def create_the_document():
     curr_proj = _get_current_project()
     bookmark_collection = _get_current_bookmark_collection()
     is_a_git_repo = bool(args.git)
-    file_name = f"bookmark_links_{curr_proj.split('::')[-1]}" if is_a_git_repo else 'bookmark_links'
+    file_name = f"bookmark_links_{curr_proj.split('::')[-1]}.txt" if is_a_git_repo else 'bookmark_links.txt'
     with open(file_name, 'w') as links:
         for each_bookmark in bookmark_collection:
             if "children" in each_bookmark and curr_proj == each_bookmark['name']:
