@@ -7,7 +7,7 @@ requirements = ["termcolor>=1.1.0", "colorama"]
 
 setup(
     name='pytrika',
-    version='0.1.6',
+    version='0.1.8',
     author="Rahul Acharya",
     author_email="mail.acharyarahul.now@gmail.com",
     description="This git-compatible module helps in organizing project specific web-url-resources. It does it by using the built-in bookmark-manager in browsers.",
