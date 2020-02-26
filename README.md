@@ -29,5 +29,5 @@ Let us say you are working on a project called TEST. While woring on TEST, you r
 # Is git branch supported?
 + Yes, only with Chrome as of now. If you are working with a git branch, you should follow the namespace
   while bookmarking your resource as repo_name::branch_name. Example:
-  Pytrika::master. You then pass the flags `-g True`. Example: `chrome_this
-  -g True`
+  Pytrika::master. You then pass the flags `-g True`. Example: `cthis -g True`.
+  For Chrome Canary, you can use the flags as such `cthis -flv canary`.
