@@ -72,6 +72,7 @@ def _write_bookmark(current_project_bookmark, links):
         current_project_bookmark, key=itemgetter("id"), reverse=True
     )
     html_header_set = False
+    g_dict = {}
     for index, each_bookmark in enumerate(current_project_bookmark):
         number = index + 1
         name = each_bookmark["name"]
@@ -80,6 +81,8 @@ def _write_bookmark(current_project_bookmark, links):
         date_added = datetime.datetime(1601, 1, 1) + datetime.timedelta(
             microseconds=timestamp
         )
+        g_dict = _dictify(name, number, url, date_added, g_dict)
+        print(g_dict)
         if not args.html:
             link = "\n{} - {}\n {}\n {}\n".format(number, name, url, date_added)
         else:
@@ -93,6 +96,25 @@ def _write_bookmark(current_project_bookmark, links):
             jsonified_link = json.loads(json.dumps(each_bookmark))
             link = _convert_jsonified_links_to_html(jsonified_link)
         links.write(link)
+
+def _dictify(name, number, url, date_added, g_dict):
+    mod_name = name.split("->>")
+    val_insertion_point = len(mod_name) - 2
+    new_dict = current = g_dict
+    if val_insertion_point >= 0:
+        val_coll = []
+        for idx, heading in enumerate(mod_name):
+            if idx == val_insertion_point:
+                last_head = heading
+            elif idx > val_insertion_point:
+                val_coll += [heading]
+                current[last_head] = val_coll
+            else:
+                current[heading] = {}
+                current = current[heading]
+    return new_dict
+
+
 
 
 def _set_html_header():
@@ -155,7 +177,7 @@ def _git_handler(file_name):
                 raise
 
 
-def create_the_document():
+def create_document():
     curr_proj = _get_current_project()
     bookmark_collection = _get_current_bookmark_collection()
     is_a_git_repo = bool(args.git) or bool(args.ga) or bool(args.gac)
@@ -206,4 +228,4 @@ def _parse_arguments():
 
 if __name__ == "__main__":
     args = _parse_arguments()
-    create_the_document()
+    create_document()
