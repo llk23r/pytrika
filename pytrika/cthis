@@ -16,20 +16,16 @@ colorama.init()
 def _get_bookmark_location():
     home_path = os.environ["HOME"]
     if platform.system() == "Linux":
-        bookmark_location = "{}/.config/google-chrome/default/Bookmarks".format(
-            home_path
-        )
+        bookmark_location = f"{home_path}/.config/google-chrome/default/Bookmarks"
     elif platform.system() == "Darwin":
         if args.flavor == "chrome":
-            bookmark_location = "{}/Library/Application Support/Google/Chrome/Default/Bookmarks".format(
-                home_path
-            )
+            bookmark_location = f"{home_path}/Library/Application Support/Google/Chrome/Default/Bookmarks"
         elif args.flavor == "canary":
-            bookmark_location = "{}/Library/Application Support/Google/Chrome Canary/Default/Bookmarks".format(
-                home_path
-            )
+            bookmark_location = f"{home_path}/Library/Application Support/Google/Chrome Canary/Default/Bookmarks"
+        elif args.flavor == "sidekick":
+            bookmark_location = f"{home_path}/Library/Application Support/Sidekick/Default/Bookmarks"
         else:
-            print("{} flavor of chrome is not supported".format(args.flavor))
+            print(f"{args.flavor} flavor of chrome is not supported")
             raise Exception
     return bookmark_location
 
@@ -81,7 +77,8 @@ def _write_bookmark(current_project_bookmark, links):
             microseconds=timestamp
         )
         if not args.html:
-            link = "\n{} - {}\n {}\n {}\n".format(number, name, url, date_added)
+            link = "\n{} - {}\n {}\n {}\n".format(number,
+                                                  name, url, date_added)
         else:
             if not html_header_set:
                 html_header = _set_html_header()
